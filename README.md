@@ -3,9 +3,6 @@
 
 
 
-# Identity & Access Management (IAM) System
-
-A robust and secure IAM system built with FastAPI, implementing multi-tenant role-based access control and modern authentication practices.
 
 ## Features
 
