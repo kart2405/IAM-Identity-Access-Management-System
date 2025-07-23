@@ -16,6 +16,26 @@
 - 🚀 API rate limiting
 - 🔍 Audit trails
 
+## Project Roadmap
+
+This project will be implemented in the following phases:
+
+1. Scaffold FastAPI project structure (app, routers, models, services, utils, config)
+2. Implement user registration, login, and JWT authentication
+3. Set up PostgreSQL models and Alembic migrations (users, roles, permissions, tenants, sessions)
+4. Add multi-tenant support (tenant isolation)
+5. Implement RBAC and permissions system
+6. Add email verification, password policies, and password hashing
+7. Implement token revocation and session management (with Redis)
+8. Add user activity logging and audit trails
+9. Implement API rate limiting and CORS protection
+10. Add input validation, SQL injection, and XSS prevention
+11. Set up Docker and Docker Compose
+12. Create environment variable management and example .env
+13. Write Pytest test suite
+14. Set up GitHub Actions for CI/CD
+15. Document API endpoints and update README
+
 ## Tech Stack
 
 - **Backend Framework**: FastAPI
@@ -71,6 +91,20 @@ alembic upgrade head
 6. Start the development server:
 ```bash
 uvicorn app.main:app --reload
+```
+
+## Quickstart
+
+After installing dependencies, you can run the development server with:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Or use Docker Compose:
+
+```bash
+docker-compose up --build
 ```
 
 ### Docker Setup
