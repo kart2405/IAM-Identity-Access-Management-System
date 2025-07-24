@@ -16,6 +16,7 @@ user_roles = Table(
     Column("role_id", Integer, ForeignKey("roles.id"), primary_key=True),
 )
 
+
 class Role(Base):
     __tablename__ = "roles"
 
@@ -26,6 +27,10 @@ class Role(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    users = relationship("User", secondary=user_roles, backref="roles")
-    permissions = relationship("Permission", secondary=role_permissions, backref="roles")
+    users = relationship(
+        "User", secondary=user_roles, backref="roles"
+    )
+    permissions = relationship(
+        "Permission", secondary=role_permissions, backref="roles"
+    )
     tenant = relationship("Tenant") 

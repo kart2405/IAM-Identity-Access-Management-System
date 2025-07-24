@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth_router, tenant_router, role_router, session_router
 from app.middleware.rate_limit import RateLimiter
 
+
 app = FastAPI(title="IAM Identity & Access Management System")
 
 app.add_middleware(RateLimiter)
@@ -21,6 +22,9 @@ app.include_router(tenant_router)
 app.include_router(role_router)
 app.include_router(session_router)
 
+
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the IAM Identity & Access Management System API"}
+    return {
+        "message": "Welcome to the IAM Identity & Access Management System API"
+    }

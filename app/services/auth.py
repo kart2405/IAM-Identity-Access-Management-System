@@ -3,16 +3,17 @@ from typing import Optional
 from passlib.context import CryptContext
 import jwt
 from app.models.user import User
-from app.models.tenant import Tenant
 from app.config import settings
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from app.utils.db import get_db
 
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
 
 class AuthService:
     @staticmethod
@@ -24,25 +25,41 @@ class AuthService:
         return pwd_context.verify(plain_password, hashed_password)
 
     @staticmethod
-    def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+    def create_access_token(
+        data: dict, expires_delta: Optional[timedelta] = None
+    ) -> str:
         to_encode = data.copy()
-        expire = datetime.utcnow() + (expires_delta or timedelta(minutes=int(settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)))
+        expire = datetime.utcnow() + (
+            expires_delta or timedelta(
+                minutes=int(settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+            )
+        )
         to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+        encoded_jwt = jwt.encode(
+            to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
+        )
         return encoded_jwt
 
     @staticmethod
-    def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+    def create_refresh_token(
+        data: dict, expires_delta: Optional[timedelta] = None
+    ) -> str:
         to_encode = data.copy()
-        expire = datetime.utcnow() + (expires_delta or timedelta(days=int(settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS)))
+        expire = datetime.utcnow() + (
+            expires_delta or timedelta(days=int(settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS))
+        )
         to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+        encoded_jwt = jwt.encode(
+            to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
+        )
         return encoded_jwt
 
     @staticmethod
     def verify_token(token: str) -> dict:
         try:
-            payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+            payload = jwt.decode(
+                token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+            )
             return payload
         except jwt.PyJWTError:
             return None
@@ -67,14 +84,21 @@ class AuthService:
     @staticmethod
     def send_verification_email(user: User):
         # Placeholder for email verification logic
-        pass 
+        pass
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
-    from app.services.auth import AuthService
+
+def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+) -> User:
     payload = AuthService.verify_token(token)
     if not payload or "user_id" not in payload:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+        )
     user = AuthService.get_user_by_id(db, payload["user_id"])
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found"
+        )
     return user 

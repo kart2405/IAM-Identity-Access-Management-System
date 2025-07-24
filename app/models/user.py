@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, f
 from sqlalchemy.orm import relationship
 from app.models.base import Base
 
+
 class User(Base):
     __tablename__ = "users"
 
@@ -14,6 +15,4 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    # Relationships
-    tenant = relationship("Tenant", back_populates="users")
-    # Add more relationships as needed 
+    tenant = relationship("Tenant", back_populates="users") 

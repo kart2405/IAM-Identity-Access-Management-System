@@ -1,5 +1,1 @@
-from .user import User
-from .tenant import Tenant
-from .role import Role
-from .permission import Permission
-from .session import Session
+# This file ensures models are imported for Alembic and SQLAlchemy metadata.

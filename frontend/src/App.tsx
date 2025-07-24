@@ -9,27 +9,51 @@ import Users from './components/Users';
 import Roles from './components/Roles';
 import Tenants from './components/Tenants';
 import AuditLog from './components/AuditLog';
+import { AuthProvider } from './AuthContext';
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   return (
-    <Router>
-      <CssBaseline />
-      <Navigation />
-      <Container maxWidth="sm" sx={{ mt: 8 }}>
-        <Box>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/roles" element={<Roles />} />
-            <Route path="/tenants" element={<Tenants />} />
-            <Route path="/audit-log" element={<AuditLog />} />
-            <Route path="/" element={<Navigate to="/login" />} />
-          </Routes>
-        </Box>
-      </Container>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <CssBaseline />
+        <Navigation />
+        <Container maxWidth="sm" sx={{ mt: 8 }}>
+          <Box>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/users" element={
+                <ProtectedRoute requiredRole="admin">
+                  <Users />
+                </ProtectedRoute>
+              } />
+              <Route path="/roles" element={
+                <ProtectedRoute requiredRole="admin">
+                  <Roles />
+                </ProtectedRoute>
+              } />
+              <Route path="/tenants" element={
+                <ProtectedRoute requiredRole="superuser">
+                  <Tenants />
+                </ProtectedRoute>
+              } />
+              <Route path="/audit-log" element={
+                <ProtectedRoute requiredRole="superuser">
+                  <AuditLog />
+                </ProtectedRoute>
+              } />
+              <Route path="/" element={<Navigate to="/login" />} />
+            </Routes>
+          </Box>
+        </Container>
+      </Router>
+    </AuthProvider>
   );
 }
 

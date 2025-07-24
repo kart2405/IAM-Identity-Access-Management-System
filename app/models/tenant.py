@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, func
 from sqlalchemy.orm import relationship
 from app.models.base import Base
 
+
 class Tenant(Base):
     __tablename__ = "tenants"
 

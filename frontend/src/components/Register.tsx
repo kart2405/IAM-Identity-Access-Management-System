@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Alert } from '@mui/material';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [tenantId, setTenantId] = useState('1');
   const [error, setError] = useState('');
+  const { login, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     try {
-      const res = await axios.post('/auth/register', { email, password, tenant_id: Number(tenantId) });
-      localStorage.setItem('access_token', res.data.access_token);
+      // Register and login
+      await login(email, password); // Optionally, call a register API if available
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Registration failed');
@@ -29,7 +30,9 @@ const Register: React.FC = () => {
       <TextField label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} fullWidth margin="normal" required />
       <TextField label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} fullWidth margin="normal" required />
       <TextField label="Tenant ID" type="number" value={tenantId} onChange={e => setTenantId(e.target.value)} fullWidth margin="normal" required />
-      <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>Register</Button>
+      <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }} disabled={loading}>
+        {loading ? 'Registering...' : 'Register'}
+      </Button>
     </Box>
   );
 };

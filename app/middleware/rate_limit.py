@@ -3,8 +3,10 @@ from starlette.middleware.base import BaseHTTPMiddleware
 import time
 from collections import defaultdict
 
+
 RATE_LIMIT = 100
 WINDOW = 900  # 15 minutes in seconds
+
 
 class RateLimiter(BaseHTTPMiddleware):
     def __init__(self, app):

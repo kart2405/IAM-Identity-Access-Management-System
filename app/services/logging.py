@@ -1,7 +1,12 @@
 import logging
-from datetime import datetime
 
-logging.basicConfig(filename='activity.log', level=logging.INFO, format='%(asctime)s %(message)s')
+
+logging.basicConfig(
+    filename='activity.log',
+    level=logging.INFO,
+    format='%(asctime)s %(message)s'
+)
+
 
 class LoggingService:
     @staticmethod
