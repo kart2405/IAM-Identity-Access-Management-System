@@ -5,6 +5,7 @@ from app.models.user import User
 from app.config import settings
 from app.utils.db import get_db
 from app.schemas.auth import UserRegister, UserLogin, TokenResponse
+from app.services.logging import LoggingService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -14,6 +15,7 @@ def register(user_in: UserRegister, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
     user = AuthService.create_user(db, user_in.email, user_in.password, user_in.tenant_id)
+    LoggingService.log_event(user.id, "register", f"email={user.email}")
     access_token = AuthService.create_access_token({"sub": user.email, "user_id": user.id})
     refresh_token = AuthService.create_refresh_token({"sub": user.email, "user_id": user.id})
     return TokenResponse(access_token=access_token, refresh_token=refresh_token)
@@ -23,6 +25,7 @@ def login(user_in: UserLogin, db: Session = Depends(get_db)):
     user = AuthService.get_user_by_email(db, user_in.email)
     if not user or not AuthService.verify_password(user_in.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    LoggingService.log_event(user.id, "login", f"email={user.email}")
     access_token = AuthService.create_access_token({"sub": user.email, "user_id": user.id})
     refresh_token = AuthService.create_refresh_token({"sub": user.email, "user_id": user.id})
     return TokenResponse(access_token=access_token, refresh_token=refresh_token) 

@@ -115,9 +115,25 @@ docker-compose up --build
 
 ## API Documentation
 
-Once the server is running, visit:
+The API is fully documented and browsable via OpenAPI/Swagger and ReDoc:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
+
+## Feature Status
+
+- [x] JWT-based authentication (access & refresh tokens)
+- [x] Multi-tenant support
+- [x] Role-based access control (RBAC)
+- [x] Token revocation and session management
+- [x] Email verification (API ready, SMTP config required)
+- [x] Password policies and security
+- [x] User activity logging
+- [x] API rate limiting
+- [x] Audit trails
+- [x] Docker & Docker Compose
+- [x] CI/CD with GitHub Actions
+- [x] Pytest test suite
+- [x] OpenAPI/Swagger documentation
 
 ## Testing
 

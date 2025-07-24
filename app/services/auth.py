@@ -6,8 +6,13 @@ from app.models.user import User
 from app.models.tenant import Tenant
 from app.config import settings
 from sqlalchemy.orm import Session
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from app.utils.db import get_db
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 class AuthService:
     @staticmethod
@@ -47,6 +52,10 @@ class AuthService:
         return db.query(User).filter(User.email == email).first()
 
     @staticmethod
+    def get_user_by_id(db: Session, user_id: int) -> Optional[User]:
+        return db.query(User).filter(User.id == user_id).first()
+
+    @staticmethod
     def create_user(db: Session, email: str, password: str, tenant_id: int) -> User:
         hashed_password = AuthService.get_password_hash(password)
         user = User(email=email, hashed_password=hashed_password, tenant_id=tenant_id)
@@ -59,3 +68,13 @@ class AuthService:
     def send_verification_email(user: User):
         # Placeholder for email verification logic
         pass 
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+    from app.services.auth import AuthService
+    payload = AuthService.verify_token(token)
+    if not payload or "user_id" not in payload:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
+    user = AuthService.get_user_by_id(db, payload["user_id"])
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+    return user 
